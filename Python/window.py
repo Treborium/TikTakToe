@@ -11,15 +11,7 @@ class TikTakToe(arcade.Window):
         self.width = width
         self.height = height
 
-        self.xo_sprite_list = arcade.SpriteList()
-        self.X_FILENAME = 'TikTakToe-X.png'
-        self.O_FILENAME = 'TikTakToe-O.png'
-        self.GRID_SIZE_X = 3
-        self.GRID_SIZE_Y = 3
-        self.SYMBOL_SPRITE_SIZE = 0.25
-        self.x_turn = True
-        self.winner = None
-
+        self.__init_variables()
         self.__init_board()
         arcade.set_background_color(arcade.color.BLACK)
 
@@ -35,6 +27,11 @@ class TikTakToe(arcade.Window):
 
     def on_mouse_press(self, x: float, y: float,
                        button: int, modifiers: int) -> None:
+        if self.winner is not None:
+            self.__init_variables()
+            self.__init_board()
+            return
+
         self.__evaluate_turn(x, y)
 
     def update(self, delta_time: float):
@@ -82,6 +79,16 @@ class TikTakToe(arcade.Window):
     def __init_board(self) -> None:
         self.board = [[None for x in range(self.GRID_SIZE_X)]
                       for y in range(self.GRID_SIZE_Y)]
+
+    def __init_variables(self) -> None:
+        self.xo_sprite_list = arcade.SpriteList()
+        self.X_FILENAME = 'TikTakToe-X.png'
+        self.O_FILENAME = 'TikTakToe-O.png'
+        self.GRID_SIZE_X = 3
+        self.GRID_SIZE_Y = 3
+        self.SYMBOL_SPRITE_SIZE = 0.25
+        self.x_turn = True
+        self.winner = None
 
     def __is_game_finished(self) -> bool:
         if self.__check_diagonal_for_winner(
