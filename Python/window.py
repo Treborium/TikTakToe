@@ -18,6 +18,7 @@ class TikTakToe(arcade.Window):
         self.GRID_SIZE_Y = 3
         self.SYMBOL_SPRITE_SIZE = 0.25
         self.x_turn = True
+        self.winner = None
 
         self.__init_board()
         arcade.set_background_color(arcade.color.BLACK)
@@ -37,13 +38,14 @@ class TikTakToe(arcade.Window):
         self.__evaluate_turn(x, y)
 
     def update(self, delta_time: float):
-        pass
+        if self.__is_game_finished():
+            print(f"{self.winner} is the winner!!!")
 
     def __evaluate_turn(self, x: float, y: float) -> None:
         x_index = int(x / (self.width / self.GRID_SIZE_X))
         y_index = int(y / (self.height / self.GRID_SIZE_Y))
 
-        if self.board[x_index][y_index] != 0:
+        if self.board[x_index][y_index] != None:
             return
 
         if self.x_turn:
@@ -56,7 +58,6 @@ class TikTakToe(arcade.Window):
             self.board[x_index][y_index] = 'O'
 
         self.xo_sprite_list.append(sprite)
-
         self.x_turn = not self.x_turn
 
     def __getResourcePath(self, resource: str) -> str:
@@ -79,5 +80,60 @@ class TikTakToe(arcade.Window):
         return sprite
 
     def __init_board(self) -> None:
-        self.board = [[0 for x in range(self.GRID_SIZE_X)]
+        self.board = [[None for x in range(self.GRID_SIZE_X)]
                       for y in range(self.GRID_SIZE_Y)]
+
+    def __is_game_finished(self) -> bool:
+        # Check for horizontal winner
+        for y in range(self.GRID_SIZE_Y):
+            symbol = self.board[0][y]
+            if symbol is None:
+                continue
+            symbol_count = 0
+            for x in range(self.GRID_SIZE_X):
+                if self.board[x][y] == symbol:
+                    symbol_count += 1
+            if symbol_count == 3:
+                self.winner = symbol
+                return True
+
+        # Check for vertical winner
+        for x in range(self.GRID_SIZE_X):
+            symbol = self.board[x][0]
+            if symbol is None:
+                continue
+            symbol_count = 0
+            for y in range(self.GRID_SIZE_Y):
+                if self.board[x][y] == symbol:
+                    symbol_count += 1
+            if symbol_count == 3:
+                self.winner = symbol
+                return True
+
+        # Check for diagonal winner
+        symbol = self.board[0][0]
+        symbol_count = 0
+        for x, y in zip(range(self.GRID_SIZE_X), range(self.GRID_SIZE_Y)):
+            if symbol is None:
+                break
+
+            if self.board[x][y] == symbol:
+                symbol_count += 1
+            if symbol_count == 3:
+                self.winner = symbol
+                return True
+
+        # Check for diagonal winner
+        symbol = self.board[0][2]
+        symbol_count = 0
+        for x, y in zip(range(self.GRID_SIZE_X), reversed(range(self.GRID_SIZE_Y))):
+            if symbol is None:
+                break
+
+            if self.board[x][y] == symbol:
+                symbol_count += 1
+            if symbol_count == 3:
+                self.winner = symbol
+                return True
+
+        return False
