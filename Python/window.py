@@ -45,7 +45,7 @@ class TikTakToe(arcade.Window):
         x_index = int(x / (self.width / self.GRID_SIZE_X))
         y_index = int(y / (self.height / self.GRID_SIZE_Y))
 
-        if self.board[x_index][y_index] != None:
+        if self.board[x_index][y_index] is not None:
             return
 
         if self.x_turn:
@@ -84,13 +84,22 @@ class TikTakToe(arcade.Window):
                       for y in range(self.GRID_SIZE_Y)]
 
     def __is_game_finished(self) -> bool:
+        if self.__check_diagonal_for_winner(
+                self.GRID_SIZE_X, self.GRID_SIZE_Y):
+            return True
+        return self.__check_horizontal_and_vertical_for_winner(
+            self.GRID_SIZE_X, self.GRID_SIZE_Y)
+
+    def __check_horizontal_and_vertical_for_winner(self,
+                                                   x_range: int,
+                                                   y_range: int) -> bool:
         # Check for horizontal winner
-        for y in range(self.GRID_SIZE_Y):
+        for y in range(y_range):
             symbol = self.board[0][y]
             if symbol is None:
                 continue
             symbol_count = 0
-            for x in range(self.GRID_SIZE_X):
+            for x in range(x_range):
                 if self.board[x][y] == symbol:
                     symbol_count += 1
             if symbol_count == 3:
@@ -98,22 +107,23 @@ class TikTakToe(arcade.Window):
                 return True
 
         # Check for vertical winner
-        for x in range(self.GRID_SIZE_X):
+        for x in range(x_range):
             symbol = self.board[x][0]
             if symbol is None:
                 continue
             symbol_count = 0
-            for y in range(self.GRID_SIZE_Y):
+            for y in range(y_range):
                 if self.board[x][y] == symbol:
                     symbol_count += 1
             if symbol_count == 3:
                 self.winner = symbol
                 return True
+        return False
 
-        # Check for diagonal winner
+    def __check_diagonal_for_winner(self, x_range: int, y_range: int) -> bool:
         symbol = self.board[0][0]
         symbol_count = 0
-        for x, y in zip(range(self.GRID_SIZE_X), range(self.GRID_SIZE_Y)):
+        for x, y in zip(range(x_range), range(y_range)):
             if symbol is None:
                 break
 
@@ -123,10 +133,9 @@ class TikTakToe(arcade.Window):
                 self.winner = symbol
                 return True
 
-        # Check for diagonal winner
-        symbol = self.board[0][2]
+        symbol = self.board[0][y_range - 1]
         symbol_count = 0
-        for x, y in zip(range(self.GRID_SIZE_X), reversed(range(self.GRID_SIZE_Y))):
+        for x, y in zip(range(x_range), reversed(range(y_range))):
             if symbol is None:
                 break
 
@@ -135,5 +144,4 @@ class TikTakToe(arcade.Window):
             if symbol_count == 3:
                 self.winner = symbol
                 return True
-
         return False
