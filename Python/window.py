@@ -10,9 +10,7 @@ class TikTakToe(arcade.Window):
         super().__init__(width, height)
         self.width = width
         self.height = height
-        arcade.set_background_color(arcade.color.BLACK)
 
-    def setup(self) -> None:
         self.xo_sprite_list = arcade.SpriteList()
         self.X_FILENAME = 'TikTakToe-X.png'
         self.O_FILENAME = 'TikTakToe-O.png'
@@ -22,7 +20,9 @@ class TikTakToe(arcade.Window):
         self.x_turn = True
 
         self.__init_board()
+        arcade.set_background_color(arcade.color.BLACK)
 
+    def setup(self) -> None:
         self.game_board = arcade.Sprite(
             self.__getResourcePath('GameBoard.png'), 1.0)
         self.game_board.set_position(self.width / 2, self.height / 2)
