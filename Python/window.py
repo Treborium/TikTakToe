@@ -18,6 +18,7 @@ class TikTakToe(arcade.Window):
         self.O_FILENAME = 'TikTakToe-O.png'
         self.GRID_SIZE_X = 3
         self.GRID_SIZE_Y = 3
+        self.SYMBOL_SPRITE_SIZE = 0.25
         self.x_turn = True
 
         self.__init_board()
@@ -46,18 +47,14 @@ class TikTakToe(arcade.Window):
             return
 
         if self.x_turn:
-            sprite = self.__load_sprite(self.X_FILENAME)
+            sprite = self.__load_and_position_sprite(
+                self.X_FILENAME, x, y, x_index, y_index)
             self.board[x_index][y_index] = 'X'
         else:
-            sprite = self.__load_sprite(self.O_FILENAME)
+            sprite = self.__load_and_position_sprite(
+                self.O_FILENAME, x, y, x_index, y_index)
             self.board[x_index][y_index] = 'O'
 
-        x_position = ((self.width / self.GRID_SIZE_X) * x_index) + \
-            (self.width / self.GRID_SIZE_X / 2)
-        y_position = ((self.height / self.GRID_SIZE_Y) * y_index) + \
-            (self.height / self.GRID_SIZE_Y / 2)
-
-        sprite.set_position(x_position, y_position)
         self.xo_sprite_list.append(sprite)
 
         self.x_turn = not self.x_turn
@@ -66,7 +63,20 @@ class TikTakToe(arcade.Window):
         return os.path.join(os.path.dirname(__file__), '..', 'Res', resource)
 
     def __load_sprite(self, filename: str) -> arcade.Sprite:
-        return arcade.Sprite(self.__getResourcePath(filename), 0.25)
+        return arcade.Sprite(self.__getResourcePath(filename),
+                             self.SYMBOL_SPRITE_SIZE)
+
+    def __load_and_position_sprite(self, filename: str,
+                                   mouse_x: float, mouse_y: float,
+                                   x_index: int, y_index: int)-> arcade.Sprite:
+        x_position = ((self.width / self.GRID_SIZE_X) * x_index) + \
+            (self.width / self.GRID_SIZE_X / 2)
+        y_position = ((self.height / self.GRID_SIZE_Y) * y_index) + \
+            (self.height / self.GRID_SIZE_Y / 2)
+
+        sprite = self.__load_sprite(filename)
+        sprite.set_position(x_position, y_position)
+        return sprite
 
     def __init_board(self) -> None:
         self.board = [[0 for x in range(self.GRID_SIZE_X)]
