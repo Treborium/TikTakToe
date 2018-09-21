@@ -42,7 +42,7 @@ class TikTakToe(arcade.Window):
                 self.width / 2,
                 self.height / 2,
                 arcade.color.LIGHT_GREEN,
-                128,
+                112,
                 width=self.width,
                 align='center',
                 anchor_x='center',
