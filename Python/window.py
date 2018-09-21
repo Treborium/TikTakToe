@@ -24,6 +24,7 @@ class TikTakToe(arcade.Window):
         arcade.start_render()
         self.game_board.draw()
         self.xo_sprite_list.draw()
+        self.text_to_render()
 
     def on_mouse_press(self, x: float, y: float,
                        button: int, modifiers: int) -> None:
@@ -36,7 +37,16 @@ class TikTakToe(arcade.Window):
 
     def update(self, delta_time: float):
         if self.__is_game_finished():
-            print(f"{self.winner} is the winner!!!")
+            self.text_to_render = lambda: arcade.draw_text(
+                f"{self.winner} WON!",
+                self.width / 2,
+                self.height / 2,
+                arcade.color.LIGHT_GREEN,
+                128,
+                width=self.width,
+                align='center',
+                anchor_x='center',
+                anchor_y='center')
 
     def __evaluate_turn(self, x: float, y: float) -> None:
         x_index = int(x / (self.width / self.GRID_SIZE_X))
@@ -89,13 +99,14 @@ class TikTakToe(arcade.Window):
         self.SYMBOL_SPRITE_SIZE = 0.25
         self.x_turn = True
         self.winner = None
+        self.text_to_render = lambda: None
 
     def __is_game_finished(self) -> bool:
-        if self.__check_diagonal_for_winner(
-                self.GRID_SIZE_X, self.GRID_SIZE_Y):
-            return True
-        return self.__check_horizontal_and_vertical_for_winner(
-            self.GRID_SIZE_X, self.GRID_SIZE_Y)
+        x = self.GRID_SIZE_X
+        y = self.GRID_SIZE_Y
+
+        return self.__check_diagonal_for_winner(x, y) or \
+            self.__check_horizontal_and_vertical_for_winner(x, y)
 
     def __check_horizontal_and_vertical_for_winner(self,
                                                    x_range: int,
